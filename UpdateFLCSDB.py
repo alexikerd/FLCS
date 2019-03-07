@@ -5,6 +5,10 @@ from sqlalchemy import *
 
 FLCS_Path = path.abspath(path.curdir)
 
+e = create_engine('mysql://Olaf:$$$W9241739q@localhost:3306/flcs')
+conn = e.connect()
+cur = conn.connection.cursor()
+
 rawdata = pd.read_csv(FLCS_Path + r"\FLCS.csv", delimiter=',',names = ("Split","Player","Position","Team","Win/Loss","Points"),usecols=(0,1,3,4,5,6))
 rawdata['Week'] = ''
 rawdata['Opponent'] = rawdata['Team'].astype(str).str[-3:]
@@ -25,3 +29,6 @@ rawdata['Player'] = rawdata['Player'].replace(week,replace)
 rawdata['Player'] = rawdata['Player'].fillna(method='ffill')
 rawdata = rawdata[rawdata['Excess'].isna()]
 rawdata = rawdata.drop(columns = ['Excess'])
+
+cur.execute("DROP TABLE IF EXISTS player")
+rawdata.to_sql(name='player',con=e,dtype={"Split": Float, "Week": Float, "Player": String(32), "Position": String(32), "Team": String(32), "Opponent": String(32), "Win/Loss": String(32), "Points": Float})
