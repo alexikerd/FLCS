@@ -5,7 +5,7 @@ from sqlalchemy import *
 
 FLCS_Path = path.abspath(path.curdir)
 
-e = create_engine('mysql://Olaf:$$$W9241739q@localhost:3306/flcs')
+e = create_engine('mysql://root:password@localhost:3306/flcs')
 conn = e.connect()
 cur = conn.connection.cursor()
 
