@@ -14,7 +14,14 @@ rawdata['Team'] = rawdata['Team'].astype(str).str[:3]
 rawdata = rawdata[["Split","Week","Player","Position","Team","Opponent","Win/Loss","Points","Excess"]]
 rawdata['Week'] = rawdata['Player'].astype(str).str[-1:]
 rawdata['Position'] = rawdata['Position'].fillna(method='ffill')
-#rawdata = rawdata[rawdata['Excess'].isna()]
-#rawdata = rawdata.drop(columns = ['Excess'])
-
-rawdata.head()
+a = 1
+week = []
+replace = []
+while (a < 10):
+    week.append("Week %d" % a)
+    replace.append(np.nan)
+    a = a + 1
+rawdata['Player'] = rawdata['Player'].replace(week,replace)
+rawdata['Player'] = rawdata['Player'].fillna(method='ffill')
+rawdata = rawdata[rawdata['Excess'].isna()]
+rawdata = rawdata.drop(columns = ['Excess'])
