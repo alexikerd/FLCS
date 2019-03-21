@@ -10,6 +10,9 @@ cur = conn.connection.cursor()
 
 FLCS_Path = path.abspath(path.curdir)
 total = pd.DataFrame(columns=["Split","Week","Player","Position","Team","Opponent","Result","Points"])
+
+FLCS_Path = path.abspath(path.curdir)
+total = pd.DataFrame(columns=["Split","Week","Player","Position","Team","Opponent","Result","Points"])
 i=1
 while (i<8):
     scrapedata = pd.read_csv(FLCS_Path + r"\Split" + str(i) + ".csv", delimiter=',',names = ("Player","Week","Position","Team","Points","Excess"),usecols=(0,1,2,3,4,12),encoding='latin-1')
@@ -38,6 +41,10 @@ while (i<8):
     total = total.append(complete)
     i+=1
 
+total['Player'] = total['Player'].replace("Incarnati0n","Jensen")
+total['Player'] = total['Player'].replace("Zion Spartan","Darshan")
+total['Player'] = total['Player'].replace("Niels","Zven")
+total['Position'] = total['Position'].replace("Jungler, Mid","Jungler")
 
 cur.execute("DROP TABLE IF EXISTS player")
 total.to_sql(name='player',con=e,dtype={"Split": Float, "Week": Float, "Player": String(32), "Position": String(32), "Team": String(32), "Opponent": String(32), "Result": String(32), "Points": Float})
