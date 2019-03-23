@@ -15,7 +15,7 @@ def scrape(url,split):
     table = soup.find_all('table',{"class":"stats-table stats-table-player"})[0]
 
     rows = table.find_all('tr')[1:]
-    CSVfile = open("Split" + str(split) + ".csv", 'wt', newline='')
+    CSVfile = open("Player" + str(split) + ".csv", 'wt', newline='')
     writer = csv.writer(CSVfile)
 
     for row in rows:
@@ -23,9 +23,28 @@ def scrape(url,split):
         for cell in row.find_all(['tr','td']):
             CSVrows.append(cell.get_text())
         writer.writerow(CSVrows)
+        
+    browser.find_elements_by_class_name("stats-nav-left")[1].click()
     
+    
+    while (j < len(browser.find_elements_by_class_name("toggle-expansion"))):
+        browser.find_elements_by_class_name("toggle-expansion")[j].click()
+        j += 1
+
+    innerHTML = browser.execute_script("return document.body.innerHTML")
+    soup = BeautifulSoup.BeautifulSoup(innerHTML,'html.parser')
+    table = soup.find_all('table',{"class":"stats-table stats-table-team"})[0]
+
+    rows = table.find_all('tr')[1:]
+    CSVfile = open("Team" + str(split) + ".csv", 'wt', newline='')
+    writer = csv.writer(CSVfile)
+
+    for row in rows:
+        CSVrows = []
+        for cell in row.find_all(['tr','td']):
+            CSVrows.append(cell.get_text())
+        writer.writerow(CSVrows)
     browser.close()
-    print("Split " + split + " is done being scraped")
 
 scrape('https://fantasy.na.lolesports.com/en-US/league/803748/stats',1)
 scrape('https://fantasy.na.lolesports.com/en-US/league/899089/stats',2)
