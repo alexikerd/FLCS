@@ -49,6 +49,9 @@ while (i<8):
 
     i+=1
 
+ #This loop takes all the information from the scraped csv files and coverts them into a single, usable dataframe
+ #Just in case riot changes the fantasy website or removes it entirely, I've copied correct csv files and all you have to do is add an _ to the end of the file name it reads from
+
 total['Player'] = total['Player'].replace("Incarnati0n","Jensen")
 total['Player'] = total['Player'].replace("Zion Spartan","Darshan")
 total['Player'] = total['Player'].replace("Niels","Zven")
@@ -57,8 +60,14 @@ total['Position'] = total['Position'].replace("Jungler, Mid","Jungler")
 total['Team'] = total['Team'].str.strip()
 total['Opponent'] = total['Opponent'].str.strip()
 
+#This cleans up the dataframe a little more
+
 
 playerroles = total[['Player','Position']].drop_duplicates()
+
+#This generates a key list of player and position because the degenerate who made the eighth split excel doc did not include positions
+
+
 total4 = pd.DataFrame(columns=["Week","Player","Team","Opponent","Region","Points"])
 Week = pd.read_excel("Split8.xlsx",sheet_name="Week1")
 WeekTeams = Week[Week["Game 1"].isna()]
@@ -162,6 +171,12 @@ WeekPlayers = WeekPlayers[WeekPlayers['Points'] != '']
 WeekPlayers = WeekPlayers.reset_index(drop=True)
 total4 = total4.append(WeekPlayers,sort=False)
 total4 = total4.reset_index(drop=True)
+
+
+#On the subject of the degenerate who made the split 8 excel sheet, for some fucked up reason tab 1 has week 1 of EU LCS, tab 2 has week 2 of EU LCS and week 1 of NA LCS.  Also, the format of tab 1 is different from the rest of the tabs... Therefore I loop through for week 1 separately from weeks 2 to 9
+
+#Also, the way teams are listed are not consistent.  Both games from the week are on the same row, but the team and opponent are not listed the same.  Therefore, I need to make this loop above to sort out which is the team (as the team the player is on will be the team that shows up twice)
+
 
 j = 2
 while(j<10):
@@ -273,15 +288,23 @@ while(j<10):
     j += 1
 
 total4 = total4.merge(playerroles, on='Player',how='left')
+
+#Here I left join the player/position key so that we actually have position listed
+
+
+
+
 total4['Result'] = ''
 total4['Split'] = 8
 total4 = total4[["Split","Week","Player","Position","Team","Opponent","Result","Points"]]
 
-
-
 total = total.append(total4,sort=false)
 
 total = total[["Split","Week","Player","Position","Team","Opponent","Result","Points"]]
+
+
+
+#I've added weeks 2 through 9 to week 1, then added this split to the rest of the seven splits
 
 total[total['Player']== 'Soligo'] = total[total['Player']== 'Soligo'].assign(Position = 'Mid')
 total[total['Player']== 'Bang'] = total[total['Player']== 'Bang'].assign(Position = 'AD Carry')
@@ -317,45 +340,7 @@ total[total['Player']== 'Promisq'] = total[total['Player']== 'Promisq'].assign(P
 total[total['Player']== 'Kumo'] = total[total['Player']== 'Kumo'].assign(Position = 'Top')
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#Some of the players are new and therefore are not listed in the player/position key and need to be manually entered.
 
 
 
@@ -369,6 +354,13 @@ total2['Result'] = total2['Result'].astype(str).str[0]
 total2 = total2[["Split","Team", "Opponent","Result","Points"]]
 total2['Team'] = total2['Team'].str.strip()
 total2['Opponent'] = total2['Opponent'].str.strip()
+
+
+
+
+#Here I do the same thing but with teams as you can also draft teams (and team points are important for predicting player points)
+
+
 
 a = total[['Split','Week','Team','Opponent','Result']]
 a = a.drop_duplicates()
@@ -389,10 +381,18 @@ while (i < len(c)):
 
 total3 = a
 
+
+
+#Here I generate a unique list of games so that it is easy to derive ELO (I did unique team opponent combinations then removed duplicates aka TSM vs C9 for week 1 and C9 vs TSM for week 1 are repeats and only one is used)
+
+
 cur.execute("DROP TABLE IF EXISTS player")
 total.to_sql(name='player',con=e,dtype={"Split": Float, "Week": Float, "Player": String(32), "Position": String(32), "Team": String(32), "Opponent": String(32), "Result": String(32), "Points": Float})
 cur.execute("DROP TABLE IF EXISTS team")
 total2.to_sql(name='team',con=e,dtype={"Split": Float, "Team": String(32), "Opponent": String(32), "Result": String(32), "Points": Float})
 cur.execute("DROP TABLE IF EXISTS results")
 total3.to_sql(name='results',con=e,dtype={"Split": Float, "Week": String(32), "Team": String(32), "Opponent": String(32), "Result": String(32)},index=False)
+
+
+#Here I upload the info into my SQL database
 
