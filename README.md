@@ -25,3 +25,7 @@ Update scripts:
 I've gone back and updated the scripts as it looks as though we didn't get a fantasy lcs this year as we were expecting.
 Most of the updates focus on cleaning up the dataframe manipulations as well as improve the scraping itself
 I'll look into visualization as well as basic data analysis although the limited number of input values will be interesting to work around.  I'll also look into using the ELO system as a possibility.
+
+1/23/2020
+
+Looks like the website I scraped from is down.  Regardless, the current plan is to do what I can to create visualizations as well as try to optimize rosters.  I might still try the ELO system
