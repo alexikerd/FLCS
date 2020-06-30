@@ -29,3 +29,7 @@ I'll look into visualization as well as basic data analysis although the limited
 1/23/2020
 
 Looks like the website I scraped from is down.  Regardless, the current plan is to do what I can to create visualizations as well as try to optimize rosters.  I might still try the ELO system
+
+Final Update
+
+I ended up creating a script that calculated the ELO.  I also manually entered game time for one of the splits.  I've created a report that goes over all of my findings
